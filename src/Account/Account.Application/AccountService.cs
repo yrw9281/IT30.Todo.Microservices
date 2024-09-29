@@ -19,7 +19,7 @@ public class AccountService : IAccountService
 
         if (user == null)
             throw new ArgumentException("Email address not exists");
-        if (user.Password != password)
+        if (!user.VerifyPassword(password))
             throw new ArgumentException("Permission denied");
 
         return new AuthenticationResult(
@@ -39,6 +39,8 @@ public class AccountService : IAccountService
         var user = User.Create(firstName, lastName, email, password);
 
         _userRepository.Add(user);
+
+        _userRepository.UnitOfWork.SaveEntitiesAsync().Wait();
 
         return new AuthenticationResult(
             user.Id.Value,

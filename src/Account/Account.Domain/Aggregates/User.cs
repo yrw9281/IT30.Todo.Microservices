@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Account.Domain.ValueObjects;
 using Common.Library.Seedwork;
 
@@ -8,7 +10,7 @@ public class User : Entity<UserId>, IAggregateRoot
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public string Email { get; private set; }
-    public string Password { get; private set; }
+    public string PasswordHash { get; private set; }
 
     private User() { }
 
@@ -18,7 +20,7 @@ public class User : Entity<UserId>, IAggregateRoot
         FirstName = firstName;
         LastName = lastName;
         Email = email;
-        Password = password;
+        PasswordHash = HashPassword(password); // Hash
         CreatedDateTime = DateTime.UtcNow;
         UpdatedDateTime = DateTime.UtcNow;
     }
@@ -34,11 +36,16 @@ public class User : Entity<UserId>, IAggregateRoot
             FirstName = firstName,
             LastName = lastName,
             Email = email,
-            Password = password,
+            PasswordHash = HashPassword(password), // Hash
             CreatedDateTime = DateTime.UtcNow,
             UpdatedDateTime = DateTime.UtcNow
         };
 
-    public bool VerifyPassword(string password) => Password == password;
+    public bool VerifyPassword(string password) => PasswordHash == HashPassword(password); // Hash
 
+    private static string HashPassword(string password)
+    {
+        var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+        return Convert.ToHexString(hashedBytes);
+    }
 }

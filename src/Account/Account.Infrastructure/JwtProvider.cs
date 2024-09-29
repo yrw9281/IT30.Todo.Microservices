@@ -72,7 +72,7 @@ public class JwtProvider : ITokenProvider
 
         var result = await tokenHandler.ValidateTokenAsync(token, validationParameters);
 
-        return result.ClaimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        return result.ClaimsIdentity?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
     }
 
     private string GenerateHashSecret(string input)
