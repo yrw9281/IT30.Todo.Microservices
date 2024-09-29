@@ -6,7 +6,7 @@ public class AccountService : IAccountService
 {
     private readonly IUserRepository _userRepository;
     private readonly ITokenProvider _tokenProvider;
-    
+
     public AccountService(IUserRepository userRepository, ITokenProvider tokenProvider)
     {
         _userRepository = userRepository;
@@ -35,7 +35,7 @@ public class AccountService : IAccountService
     {
         if (_userRepository.GetUserByEmail(email) is not null)
             throw new ArgumentException("Email address already exists");
-        
+
         var user = User.Create(firstName, lastName, email, password);
 
         _userRepository.Add(user);

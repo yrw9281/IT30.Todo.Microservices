@@ -63,7 +63,7 @@ public class JwtProvider : ITokenProvider
             ValidateAudience = true,
             ValidAudience = _jwtSettings.Audience,
 
-            ValidateLifetime = true, 
+            ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
 
             ValidateIssuerSigningKey = true,

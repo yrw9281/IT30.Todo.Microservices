@@ -3,11 +3,11 @@ namespace Common.Library.Seedwork;
 public abstract class Entity<TId> where TId : notnull
 {
     private readonly List<IDomainEvent> _domainEvents = new();
-    
+
     public required TId Id { get; init; }
     public DateTime CreatedDateTime { get; set; }
     public DateTime UpdatedDateTime { get; set; }
-    
+
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public void AddDomainEvent(IDomainEvent domainEvent)

@@ -15,8 +15,8 @@ public class GrpcAccountService : AccountGrpcService.AccountGrpcServiceBase
     public override Task<AuthenticationResponse> Register(RegisterRequest request, ServerCallContext context)
     {
         var result = _accountService.Register(request.FirstName, request.LastName, request.Email, request.Password);
-        
-        var response = new AuthenticationResponse() 
+
+        var response = new AuthenticationResponse()
         {
             Id = result.Id.ToString(),
             FirstName = result.FirstName,
@@ -24,15 +24,15 @@ public class GrpcAccountService : AccountGrpcService.AccountGrpcServiceBase
             Email = result.Email,
             Token = result.Token
         };
-        
+
         return Task.FromResult(response);
     }
 
     public override Task<AuthenticationResponse> Login(LoginRequest request, ServerCallContext context)
     {
         var result = _accountService.Login(request.Email, request.Password);
-        
-        var response = new AuthenticationResponse() 
+
+        var response = new AuthenticationResponse()
         {
             Id = result.Id.ToString(),
             FirstName = result.FirstName,
@@ -40,7 +40,7 @@ public class GrpcAccountService : AccountGrpcService.AccountGrpcServiceBase
             Email = result.Email,
             Token = result.Token
         };
-        
+
         return Task.FromResult(response);
     }
 
