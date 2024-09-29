@@ -1,0 +1,6 @@
+@BFF.Gateway_HostAddress = http://localhost:5282
+
+GET {{BFF.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

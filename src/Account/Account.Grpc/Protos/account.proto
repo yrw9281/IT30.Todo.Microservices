@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "Account.Grpc";
+
+service AccountGrpcService {
+  rpc Register (RegisterRequest) returns (AuthenticationResponse);
+  rpc Login (LoginRequest) returns (AuthenticationResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+}
+
+message RegisterRequest {
+  string FirstName = 1;
+  string LastName = 2;
+  string Email = 3;
+  string Password = 4;
+}
+
+message LoginRequest {
+  string Email = 1;
+  string Password = 2;
+}
+
+message AuthenticationResponse {
+  string Id = 1;
+  string FirstName = 2;
+  string LastName = 3;
+  string Email = 4;
+  string Token = 5;
+}
+
+message ValidateTokenRequest {
+  string Token = 1;
+}
+
+message ValidateTokenResponse {
+  bool isValid = 1;
+  string UserId = 2;
+}

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  account_db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd!
+    ports:
+      - "1433:1433"
+    volumes:
+      - account_data:/var/opt/mssql
+    networks:
+      - app-network
+
+  todo_db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passw0rd!
+    ports:
+      - "1434:1433"
+    volumes:
+      - todo_data:/var/opt/mssql
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+
+volumes:
+  account_data:
+  todo_data:
+
+networks:
+  app-network:
