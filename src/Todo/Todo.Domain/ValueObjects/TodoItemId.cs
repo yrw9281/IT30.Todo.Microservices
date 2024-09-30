@@ -16,6 +16,11 @@ public class TodoItemId : ValueObject
         return new(Guid.NewGuid());
     }
 
+    public static TodoItemId Create(Guid value)
+    {
+        return new(value);
+    }
+
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;

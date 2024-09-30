@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "Todo.Grpc";
+
+service TodoListGrpcService {
+  rpc CreateTodoList (CreateTodoListRequest) returns (CreateTodoListResponse);
+}
+
+message CreateTodoListRequest {
+  string UserId = 1;
+  string Name = 2;
+  string Description = 3;
+}
+
+message CreateTodoListResponse {
+  string Id = 1;
+  string UserId = 2;
+  string Name = 3;
+  string Description = 4;
+}
