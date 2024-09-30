@@ -2,7 +2,7 @@ using Todo.Domain.ValueObjects.Enums;
 
 namespace Todo.Application;
 
-public record CreateTodoListResult(
+public record TodoListResult(
     Guid Id,
     Guid UserId,
     string Name,

@@ -3,15 +3,28 @@ syntax = "proto3";
 option csharp_namespace = "Todo.Grpc";
 
 service TodoItemGrpcService {
-  rpc CreateTodoItem (CreateTodoItemRequest) returns (CreateTodoItemResponse);
+  rpc CreateTodoItem (CreateTodoItemRequest) returns (TodoItemResponse);
+  rpc FinishTodoItem (FinishTodoItemRequest) returns (TodoItemResponse);
+  rpc RemoveTodoItem (RemoveTodoItemRequest) returns (TodoItemResponse);
 }
 
 message CreateTodoItemRequest {
-  string UserId = 1;
-  string Name = 2;
-  string Description = 3;
+  string ListId = 1;
+  string Content = 2;
 }
 
-message CreateTodoItemResponse {
-  string message = 1;
+message FinishTodoItemRequest {
+  string Id = 1;
+}
+
+message RemoveTodoItemRequest {
+  string Id = 1;
+}
+
+message TodoItemResponse {
+  string Id = 1;
+  string ListId = 2;
+  string Content = 3;
+  string Status = 4;
+  string Color = 5;
 }

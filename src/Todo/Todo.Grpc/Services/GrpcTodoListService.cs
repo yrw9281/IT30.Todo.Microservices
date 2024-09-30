@@ -12,16 +12,17 @@ public class GrpcTodoListService : TodoListGrpcService.TodoListGrpcServiceBase
         this._todoListService = todoListService;
     }
 
-    public override Task<CreateTodoListResponse> CreateTodoList(CreateTodoListRequest request, ServerCallContext context)
+    public override Task<TodoListResponse> CreateTodoList(CreateTodoListRequest request, ServerCallContext context)
     {
         var result = _todoListService.CreateTodoList(new Guid(request.UserId), request.Name, request.Description);
 
-        CreateTodoListResponse response = new()
+        TodoListResponse response = new()
         {
             Id = result.Id.ToString(),
             UserId = result.UserId.ToString(),
             Name = result.Name,
-            Description = result.Description
+            Description = result.Description,
+            Status = result.Status.ToString()
         };
 
         return Task.FromResult(response);

@@ -12,6 +12,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GrpcTodoListService>();
+app.MapGrpcService<GrpcTodoItemService>();
 app.MapGrpcReflectionService();
 
 app.Run();
