@@ -8,7 +8,7 @@ public class TodoList : Entity<TodoListId>, IAggregateRoot
 {
     public string Name { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
-    public TodoListStatus Status { get; private set; }
+    public TodoListStatus Status { get; set; }
     public Guid UserId { get; private set; }
     public ICollection<Guid> TodoItemIds { get; set; } = new List<Guid>();
 

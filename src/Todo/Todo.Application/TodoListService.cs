@@ -5,7 +5,7 @@ namespace Todo.Application;
 
 public class TodoListService : ITodoListService
 {
-    private readonly List<TodoList> _todoLists = new();
+    private static readonly List<TodoList> _todoLists = new();
     
     public TodoListResult CreateTodoList(Guid userId, string name, string description)
     {

@@ -7,7 +7,7 @@ namespace Todo.Domain.Aggregates;
 public class TodoItem : Entity<TodoItemId>, IAggregateRoot
 {
     public string Content { get; private set; } = string.Empty;
-    public TodoItemStatus Status { get; private set; } = TodoItemStatus.Default();
+    public TodoItemStatus Status { get; set; } = TodoItemStatus.Default();
     public Guid ListId { get; private set; }
 
     private TodoItem() { }
