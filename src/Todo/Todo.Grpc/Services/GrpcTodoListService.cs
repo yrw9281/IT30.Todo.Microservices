@@ -27,4 +27,20 @@ public class GrpcTodoListService : TodoListGrpcService.TodoListGrpcServiceBase
 
         return Task.FromResult(response);
     }
+
+    public override Task<TodoListResponse> RemoveTodoList(RemoveTodoListRequest request, ServerCallContext context)
+    {
+        var result = _todoListService.RemoveTodoList(new Guid(request.Id));
+
+        TodoListResponse response = new()
+        {
+            Id = result.Id.ToString(),
+            UserId = result.UserId.ToString(),
+            Name = result.Name,
+            Description = result.Description,
+            Status = result.Status.ToString()
+        };
+
+        return Task.FromResult(response);
+    }
 }

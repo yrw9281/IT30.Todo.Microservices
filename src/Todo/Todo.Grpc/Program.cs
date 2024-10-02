@@ -1,12 +1,13 @@
 using Todo.Grpc.Services;
 using Todo.Application;
+using Todo.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
-builder.Services.AddTodoApplication();
+builder.Services.AddTodoApplication().AddTodoInfrastructure();
 
 var app = builder.Build();
 

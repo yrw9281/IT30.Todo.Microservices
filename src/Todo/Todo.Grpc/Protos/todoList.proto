@@ -4,12 +4,17 @@ option csharp_namespace = "Todo.Grpc";
 
 service TodoListGrpcService {
   rpc CreateTodoList (CreateTodoListRequest) returns (TodoListResponse);
+  rpc RemoveTodoList (RemoveTodoListRequest) returns (TodoListResponse);
 }
 
 message CreateTodoListRequest {
   string UserId = 1;
   string Name = 2;
   string Description = 3;
+}
+
+message RemoveTodoListRequest {
+  string Id = 1;
 }
 
 message TodoListResponse {

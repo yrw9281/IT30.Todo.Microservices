@@ -1,4 +1,5 @@
 using Common.Library.Seedwork;
+using Todo.Domain.Events;
 using Todo.Domain.ValueObjects;
 using Todo.Domain.ValueObjects.Enums;
 
@@ -44,5 +45,6 @@ public class TodoList : Entity<TodoListId>, IAggregateRoot
     {
         Status = TodoListStatus.Removed;
         UpdatedDateTime = DateTime.UtcNow;
+        AddDomainEvent(new TodoListRemovedEvent(this.Id.Value));
     }
 }
