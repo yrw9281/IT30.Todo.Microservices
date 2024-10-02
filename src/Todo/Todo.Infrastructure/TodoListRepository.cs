@@ -1,22 +1,28 @@
 using Common.Library.Seedwork;
 using Todo.Application;
 using Todo.Domain.Aggregates;
+using Todo.Domain.ValueObjects;
 
 namespace Todo.Infrastructure;
 
 public class TodoListRepository : ITodoListRepository
 {
-    private static readonly List<TodoList> todoLists = new List<TodoList>();
+    private readonly TodoContext _todoContext;
 
-    public IUnitOfWork UnitOfWork => throw new NotImplementedException();
+    public TodoListRepository(TodoContext todoContext)
+    {
+        this._todoContext = todoContext;
+    }
+    
+    public IUnitOfWork UnitOfWork => _todoContext;
 
     public void Add(TodoList list)
     {
-        todoLists.Add(list);
+        _todoContext.TodoLists.Add(list);
     }
 
     public TodoList? GetByGuid(Guid guid)
     {
-        return todoLists.SingleOrDefault(x => x.Id.Value == guid);
+        return _todoContext.TodoLists.SingleOrDefault(x => x.Id == TodoListId.Create(guid));
     }
 }

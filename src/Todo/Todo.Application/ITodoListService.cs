@@ -2,6 +2,6 @@
 
 public interface ITodoListService
 {
-    TodoListResult CreateTodoList(Guid userId, string name, string description);
-    TodoListResult RemoveTodoList(Guid guid);
+    Task<TodoListResult> CreateTodoListAsync(Guid userId, string name, string description);
+    Task<TodoListResult> RemoveTodoListAsync(Guid guid);
 }

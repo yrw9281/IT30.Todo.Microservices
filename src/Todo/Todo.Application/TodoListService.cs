@@ -10,17 +10,19 @@ public class TodoListService : ITodoListService
     {
         this._todoListRepository = todoListRepository;
     }
-    
-    public TodoListResult CreateTodoList(Guid userId, string name, string description)
+
+    public async Task<TodoListResult> CreateTodoListAsync(Guid userId, string name, string description)
     {
         var list = TodoList.Create(name, description, userId);
 
         _todoListRepository.Add(list);
 
+        await _todoListRepository.UnitOfWork.SaveEntitiesAsync();
+
         return new TodoListResult(list.Id.Value, list.UserId, list.Name, list.Description, list.Status);
     }
 
-    public TodoListResult RemoveTodoList(Guid guid)
+    public async Task<TodoListResult> RemoveTodoListAsync(Guid guid)
     {
         var list = _todoListRepository.GetByGuid(guid);
 
@@ -28,6 +30,8 @@ public class TodoListService : ITodoListService
             throw new ArgumentException("Todo list not exists");
 
         list.Remove();
+
+        await _todoListRepository.UnitOfWork.SaveEntitiesAsync();
 
         return new TodoListResult(list.Id.Value, list.UserId, list.Name, list.Description, list.Status);
     }

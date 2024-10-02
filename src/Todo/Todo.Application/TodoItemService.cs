@@ -12,16 +12,18 @@ public class TodoItemService : ITodoItemService
         this._todoItemRepository = todoItemRepository;
     }
 
-    public TodoItemResult CreateTodoItem(Guid userId, string content)
+    public async Task<TodoItemResult> CreateTodoItemAsync(Guid userId, string content)
     {
         var item = TodoItem.Create(content, userId);
 
         _todoItemRepository.Add(item);
 
+        await _todoItemRepository.UnitOfWork.SaveEntitiesAsync();
+
         return new TodoItemResult(item.Id.Value, item.ListId, item.Content, item.Status);
     }
 
-    public TodoItemResult FinishTodoItem(Guid guid)
+    public async Task<TodoItemResult> FinishTodoItemAsync(Guid guid)
     {
         var item = _todoItemRepository.GetByGuid(guid);
 
@@ -32,10 +34,12 @@ public class TodoItemService : ITodoItemService
 
         item.MarkAsFinished();
         
+        await _todoItemRepository.UnitOfWork.SaveEntitiesAsync();
+
         return new TodoItemResult(item.Id.Value, item.ListId, item.Content, item.Status);
     }
 
-    public TodoItemResult RemoveTodoItem(Guid guid)
+    public async Task<TodoItemResult> RemoveTodoItemAsync(Guid guid)
     {
         var item = _todoItemRepository.GetByGuid(guid);
 
@@ -44,6 +48,8 @@ public class TodoItemService : ITodoItemService
 
         item.Remove();
         
+        await _todoItemRepository.UnitOfWork.SaveEntitiesAsync();
+
         return new TodoItemResult(item.Id.Value, item.ListId, item.Content, item.Status);
     }
 }

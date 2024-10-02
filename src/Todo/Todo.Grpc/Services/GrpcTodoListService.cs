@@ -12,9 +12,9 @@ public class GrpcTodoListService : TodoListGrpcService.TodoListGrpcServiceBase
         this._todoListService = todoListService;
     }
 
-    public override Task<TodoListResponse> CreateTodoList(CreateTodoListRequest request, ServerCallContext context)
+    public override async Task<TodoListResponse> CreateTodoList(CreateTodoListRequest request, ServerCallContext context)
     {
-        var result = _todoListService.CreateTodoList(new Guid(request.UserId), request.Name, request.Description);
+        var result = await _todoListService.CreateTodoListAsync(new Guid(request.UserId), request.Name, request.Description);
 
         TodoListResponse response = new()
         {
@@ -25,12 +25,12 @@ public class GrpcTodoListService : TodoListGrpcService.TodoListGrpcServiceBase
             Status = result.Status.ToString()
         };
 
-        return Task.FromResult(response);
+        return response;
     }
 
-    public override Task<TodoListResponse> RemoveTodoList(RemoveTodoListRequest request, ServerCallContext context)
+    public override async Task<TodoListResponse> RemoveTodoList(RemoveTodoListRequest request, ServerCallContext context)
     {
-        var result = _todoListService.RemoveTodoList(new Guid(request.Id));
+        var result = await _todoListService.RemoveTodoListAsync(new Guid(request.Id));
 
         TodoListResponse response = new()
         {
@@ -41,6 +41,6 @@ public class GrpcTodoListService : TodoListGrpcService.TodoListGrpcServiceBase
             Status = result.Status.ToString()
         };
 
-        return Task.FromResult(response);
+        return response;
     }
 }

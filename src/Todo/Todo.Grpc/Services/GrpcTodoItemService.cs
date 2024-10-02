@@ -12,9 +12,9 @@ public class GrpcTodoItemService : TodoItemGrpcService.TodoItemGrpcServiceBase
         this._todoItemService = todoItemService;
     }
 
-    public override Task<TodoItemResponse> CreateTodoItem(CreateTodoItemRequest request, ServerCallContext context)
+    public override async Task<TodoItemResponse> CreateTodoItem(CreateTodoItemRequest request, ServerCallContext context)
     {
-        var result = _todoItemService.CreateTodoItem(new Guid(request.ListId), request.Content);
+        var result = await _todoItemService.CreateTodoItemAsync(new Guid(request.ListId), request.Content);
 
         TodoItemResponse response = new()
         {
@@ -25,12 +25,12 @@ public class GrpcTodoItemService : TodoItemGrpcService.TodoItemGrpcServiceBase
             Color = result.Status.Color
         };
     
-        return Task.FromResult(response);
+        return response;
     }
 
-    public override Task<TodoItemResponse> FinishTodoItem(FinishTodoItemRequest request, ServerCallContext context)
+    public override async Task<TodoItemResponse> FinishTodoItem(FinishTodoItemRequest request, ServerCallContext context)
     {
-        var result = _todoItemService.FinishTodoItem(new Guid(request.Id));
+        var result = await _todoItemService.FinishTodoItemAsync(new Guid(request.Id));
 
         TodoItemResponse response = new()
         {
@@ -41,12 +41,12 @@ public class GrpcTodoItemService : TodoItemGrpcService.TodoItemGrpcServiceBase
             Color = result.Status.Color
         };
     
-        return Task.FromResult(response);
+        return response;
     }
 
-    public override Task<TodoItemResponse> RemoveTodoItem(RemoveTodoItemRequest request, ServerCallContext context)
+    public override async Task<TodoItemResponse> RemoveTodoItem(RemoveTodoItemRequest request, ServerCallContext context)
     {
-        var result = _todoItemService.RemoveTodoItem(new Guid(request.Id));
+        var result = await _todoItemService.RemoveTodoItemAsync(new Guid(request.Id));
 
         TodoItemResponse response = new()
         {
@@ -57,6 +57,6 @@ public class GrpcTodoItemService : TodoItemGrpcService.TodoItemGrpcServiceBase
             Color = result.Status.Color
         };
     
-        return Task.FromResult(response);
+        return response;
     }
 }

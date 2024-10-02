@@ -2,7 +2,7 @@ namespace Todo.Application;
 
 public interface ITodoItemService
 {
-    TodoItemResult CreateTodoItem(Guid listId, string content);
-    TodoItemResult FinishTodoItem(Guid guid);
-    TodoItemResult RemoveTodoItem(Guid guid);
+    Task<TodoItemResult> CreateTodoItemAsync(Guid listId, string content);
+    Task<TodoItemResult> FinishTodoItemAsync(Guid guid);
+    Task<TodoItemResult> RemoveTodoItemAsync(Guid guid);
 }
