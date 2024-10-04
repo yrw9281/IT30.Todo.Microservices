@@ -8,7 +8,7 @@ public class TodoItemService : ITodoItemService
     private readonly ITodoItemRepository _todoItemRepository;
 
     public TodoItemService(ITodoItemRepository todoItemRepository)
-{
+    {
         this._todoItemRepository = todoItemRepository;
     }
 
@@ -33,7 +33,7 @@ public class TodoItemService : ITodoItemService
             throw new ArgumentException("Todo item cannot be finished");
 
         item.MarkAsFinished();
-        
+
         await _todoItemRepository.UnitOfWork.SaveEntitiesAsync();
 
         return new TodoItemResult(item.Id.Value, item.ListId, item.Content, item.Status);
@@ -47,7 +47,7 @@ public class TodoItemService : ITodoItemService
             throw new ArgumentException("Todo item not exists");
 
         item.Remove();
-        
+
         await _todoItemRepository.UnitOfWork.SaveEntitiesAsync();
 
         return new TodoItemResult(item.Id.Value, item.ListId, item.Content, item.Status);

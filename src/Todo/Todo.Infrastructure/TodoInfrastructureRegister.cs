@@ -10,6 +10,7 @@ public static class TodoInfrastructureRegister
         services.AddScoped<ITodoListRepository, TodoListRepository>();
         services.AddScoped<ITodoItemRepository, TodoItemRepository>();
         services.AddDbContext<TodoContext>();
+        services.AddScoped<DomainEventsInterceptor>();
 
         return services;
     }

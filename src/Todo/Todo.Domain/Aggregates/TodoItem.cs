@@ -46,5 +46,4 @@ public class TodoItem : Entity<TodoItemId>, IAggregateRoot
         Status = new TodoItemStatus(TodoItemState.Removed);
         UpdatedDateTime = DateTime.UtcNow;
     }
-
 }

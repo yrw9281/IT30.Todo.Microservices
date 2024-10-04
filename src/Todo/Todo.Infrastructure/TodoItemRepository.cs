@@ -25,4 +25,9 @@ public class TodoItemRepository : ITodoItemRepository
     {
         return _todoContext.TodoItems.SingleOrDefault(x => x.Id == TodoItemId.Create(guid));
     }
+
+    public ICollection<TodoItem>? FindByListId(Guid guid)
+    {
+        return _todoContext.TodoItems.Where(x => x.ListId == guid).ToList();
+    }
 }

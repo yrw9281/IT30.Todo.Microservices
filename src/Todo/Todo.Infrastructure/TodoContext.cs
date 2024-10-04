@@ -10,13 +10,19 @@ public class TodoContext : DbContext, IUnitOfWork
 {
     private const string DEFAULT_CONNECTION_SECTION = "DefaultConnection";
     private readonly IConfiguration _configuration;
+    private readonly DomainEventsInterceptor _domainEventsInterceptor;
 
     public DbSet<TodoList> TodoLists { get; set; }
-    public DbSet<TodoItem> TodoItems{ get; set; }
+    public DbSet<TodoItem> TodoItems { get; set; }
 
-    public TodoContext(DbContextOptions<TodoContext> options, IConfiguration configuration) : base(options)
+    public TodoContext(
+        DbContextOptions<TodoContext> options,
+        IConfiguration configuration,
+        DomainEventsInterceptor domainEventsInterceptor
+        ) : base(options)
     {
         _configuration = configuration;
+        _domainEventsInterceptor = domainEventsInterceptor;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -24,12 +30,13 @@ public class TodoContext : DbContext, IUnitOfWork
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString(DEFAULT_CONNECTION_SECTION));
+            optionsBuilder.AddInterceptors(_domainEventsInterceptor);
         }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);            
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
@@ -38,7 +45,7 @@ public class TodoContext : DbContext, IUnitOfWork
         try
         {
             await base.SaveChangesAsync(cancellationToken);
-            return true; 
+            return true;
         }
         catch (Exception)
         {
