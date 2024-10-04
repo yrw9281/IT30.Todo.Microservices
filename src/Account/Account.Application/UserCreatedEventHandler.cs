@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Account.Domain.Events;
+using Common.Library.IntegrationEvents;
 using Common.Library.Services;
 using MediatR;
 
@@ -15,10 +16,12 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedEvent>
     }
 
     public Task Handle(UserCreatedEvent notification, CancellationToken cancellationToken)
-    {        
-        var message = JsonSerializer.Serialize(notification);
+    {
+        var integrationEvent = new UserCreatedIntegrationEvent(notification.UserId, DateTime.UtcNow);
 
-        _rabbitMQService.SendMessage(typeof(UserCreatedEvent).Name, message);
+        var message = JsonSerializer.Serialize(integrationEvent);
+
+        _rabbitMQService.SendMessage(typeof(UserCreatedIntegrationEvent).Name, message);
 
         return Task.CompletedTask;
     }
