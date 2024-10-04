@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Todo.Infrastructure;
+namespace Common.Library.Interceptors;
 
 public class DomainEventsInterceptor : SaveChangesInterceptor
 {

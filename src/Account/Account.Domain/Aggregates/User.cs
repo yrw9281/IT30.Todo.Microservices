@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Account.Domain.Events;
 using Account.Domain.ValueObjects;
 using Common.Library.Seedwork;
 
@@ -30,7 +31,8 @@ public class User : Entity<UserId>, IAggregateRoot
         string lastName,
         string email,
         string password)
-        => new()
+    {
+        var user = new User()
         {
             Id = UserId.Create(),
             FirstName = firstName,
@@ -40,6 +42,11 @@ public class User : Entity<UserId>, IAggregateRoot
             CreatedDateTime = DateTime.UtcNow,
             UpdatedDateTime = DateTime.UtcNow
         };
+
+        user.AddDomainEvent(new UserCreatedEvent(user.Id.Value));
+
+        return user;
+    }
 
     public bool VerifyPassword(string password) => PasswordHash == HashPassword(password); // Hash
 
