@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Account.Domain.Events;
 using Common.Library.IntegrationEvents;
 using Common.Library.Services;
@@ -19,9 +18,7 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedEvent>
     {
         var integrationEvent = new UserCreatedIntegrationEvent(notification.UserId, DateTime.UtcNow);
 
-        var message = JsonSerializer.Serialize(integrationEvent);
-
-        _rabbitMQService.SendMessage(typeof(UserCreatedIntegrationEvent).Name, message);
+        _rabbitMQService.SendMessage(integrationEvent);
 
         return Task.CompletedTask;
     }
