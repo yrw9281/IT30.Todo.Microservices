@@ -50,10 +50,19 @@ public class JwtProvider : ITokenProvider
 
     public async Task<string?> ValidateTokenAsync(string token)
     {
-        var secret = GenerateHashSecret(_jwtSettings.Secret);
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+        var validationParameters = GetTokenValidationParameters();
 
         var tokenHandler = new JsonWebTokenHandler();
+
+        var result = await tokenHandler.ValidateTokenAsync(token, validationParameters);
+
+        return result.ClaimsIdentity?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+    }
+
+    public TokenValidationParameters GetTokenValidationParameters()
+    {
+        var secret = GenerateHashSecret(_jwtSettings.Secret);
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
         var validationParameters = new TokenValidationParameters
         {
@@ -70,9 +79,7 @@ public class JwtProvider : ITokenProvider
             IssuerSigningKey = securityKey,
         };
 
-        var result = await tokenHandler.ValidateTokenAsync(token, validationParameters);
-
-        return result.ClaimsIdentity?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        return validationParameters;
     }
 
     private string GenerateHashSecret(string input)

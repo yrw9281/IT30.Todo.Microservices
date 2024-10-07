@@ -38,27 +38,18 @@ Content-Type: application/json
 }
 
 ### TodoItemController - Remove Todo Item
-DELETE {{HostAddress}}/api/TodoItem/remove
-Content-Type: application/json
-
-{
-  "id": "string"
-}
+DELETE {{HostAddress}}/api/TodoItem/remove/B2D3DB93-6CF2-408A-8360-CFA8AE5AFC88
 
 ### TodoListController - Create Todo List
 POST {{HostAddress}}/api/TodoList/create
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0b2RvLWF1ZGllbmNlIiwiaXNzIjoidG9kby1pc3N1ZXIiLCJleHAiOjE3MjgyODQyNTUsInN1YiI6ImY0ZmY5Yjk5LTJmMjYtNGE5My1hMjk3LWI0YTVlMmRmZmVmMiIsImdpdmVuX25hbWUiOiJzdHJpbmciLCJmYW1pbHlfbmFtZSI6InN0cmluZyIsImp0aSI6ImRjZjkxNjk2LTZhMjQtNDBjMi04OTFkLWNmMGI3ZDQzZjk4MyIsImlhdCI6MTcyODI4Mzk1NSwibmJmIjoxNzI4MjgzOTU1fQ.82LDAZSIZnVaGMeOyximh_zMCuqeIOv1ky-fSTTpWfg
 Content-Type: application/json
 
 {
-  "userId": "string",
+  "userId": "f4ff9b99-2f26-4a93-a297-b4a5e2dffef2",
   "name": "string",
   "description": "string"
 }
 
 ### TodoListController - Remove Todo List
-DELETE {{HostAddress}}/api/TodoList/remove
-Content-Type: application/json
-
-{
-  "id": "string"
-}
+DELETE {{HostAddress}}/api/TodoList/remove/B2D3DB93-6CF2-408A-8360-CFA8AE5AFC88

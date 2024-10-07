@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using Account.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ builder.Services.AddGrpcClient<Todo.Grpc.TodoItemGrpcService.TodoItemGrpcService
     o.Address = new Uri("http://localhost:5144");
 });
 
+builder.Services.AddAccountAuthentication(builder.Configuration);
+
 var app = builder.Build();
 
 // Middleware
@@ -34,5 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GrpcRestGateway v1"));
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

@@ -1,10 +1,12 @@
 using Todo.Grpc;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BFF.Gateway.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TodoListController : ControllerBase
 {
     private readonly TodoListGrpcService.TodoListGrpcServiceClient _todoListClient;
