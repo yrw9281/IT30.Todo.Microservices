@@ -7,8 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Link Account and Todo proto files -->
+    <Protobuf Include="..\..\Account\Account.Grpc\Protos\account.proto" Link="Protos\account.proto" GrpcServices="Client" />
+    <Protobuf Include="..\..\Todo\Todo.Grpc\Protos\todoList.proto" Link="Protos\todoList.proto" GrpcServices="Client" />
+    <Protobuf Include="..\..\Todo\Todo.Grpc\Protos\todoItem.proto" Link="Protos\todoItem.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
   </ItemGroup>
 
 </Project>
