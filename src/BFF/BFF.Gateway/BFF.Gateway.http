@@ -1,6 +1,64 @@
-@BFF.Gateway_HostAddress = http://localhost:5282
+@HostAddress = http://localhost:5282
 
-GET {{BFF.Gateway_HostAddress}}/weatherforecast/
-Accept: application/json
+### AccountController - Register
+POST {{HostAddress}}/api/Account/register
+Content-Type: application/json
 
-###
+{
+  "firstName": "string",
+  "lastName": "string",
+  "email": "string",
+  "password": "string"
+}
+
+### AccountController - Login
+POST {{HostAddress}}/api/Account/login
+Content-Type: application/json
+
+{
+  "email": "string",
+  "password": "string"
+}
+
+### TodoItemController - Create Todo Item
+POST {{HostAddress}}/api/TodoItem/create
+Content-Type: application/json
+
+{
+  "listId": "string",
+  "content": "string"
+}
+
+### TodoItemController - Finish Todo Item
+POST {{HostAddress}}/api/TodoItem/finish
+Content-Type: application/json
+
+{
+  "id": "string"
+}
+
+### TodoItemController - Remove Todo Item
+DELETE {{HostAddress}}/api/TodoItem/remove
+Content-Type: application/json
+
+{
+  "id": "string"
+}
+
+### TodoListController - Create Todo List
+POST {{HostAddress}}/api/TodoList/create
+Content-Type: application/json
+
+{
+  "userId": "string",
+  "name": "string",
+  "description": "string"
+}
+
+### TodoListController - Remove Todo List
+DELETE {{HostAddress}}/api/TodoList/remove
+Content-Type: application/json
+
+{
+  "id": "string"
+}

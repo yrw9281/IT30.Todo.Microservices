@@ -21,10 +21,10 @@ public class TodoListController : ControllerBase
         return Ok(response);
     }
 
-    [HttpDelete("remove")]
-    public async Task<IActionResult> RemoveTodoList([FromBody] RemoveTodoListRequest request)
+    [HttpDelete("remove/{id}")]
+    public async Task<IActionResult> RemoveTodoList(Guid id)
     {
-        var response = await _todoListClient.RemoveTodoListAsync(request);
+        var response = await _todoListClient.RemoveTodoListAsync(new RemoveTodoListRequest() { Id = id.ToString() });
         return Ok(response);
     }
 }

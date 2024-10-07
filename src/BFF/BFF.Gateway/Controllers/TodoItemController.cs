@@ -28,10 +28,10 @@ public class TodoItemController : ControllerBase
         return Ok(response);
     }
 
-    [HttpDelete("remove")]
-    public async Task<IActionResult> RemoveTodoItem([FromBody] RemoveTodoItemRequest request)
+    [HttpDelete("remove/{id}")]
+    public async Task<IActionResult> RemoveTodoItem(Guid id)
     {
-        var response = await _todoItemClient.RemoveTodoItemAsync(request);
+        var response = await _todoItemClient.RemoveTodoItemAsync(new RemoveTodoItemRequest() { Id = id.ToString() });
         return Ok(response);
     }
 }
