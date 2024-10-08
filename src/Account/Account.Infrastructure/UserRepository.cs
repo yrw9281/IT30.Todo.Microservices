@@ -23,4 +23,9 @@ public class UserRepository : IUserRepository
     {
         _accountContext.Users.Add(user);
     }
+    
+    public IQueryable<Domain.Aggregates.User> GetUsers()
+    {
+        return _accountContext.Users;
+    }
 }

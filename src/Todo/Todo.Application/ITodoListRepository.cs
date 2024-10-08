@@ -7,4 +7,5 @@ public interface ITodoListRepository : IRepository<TodoList>
 {
     void Add(TodoList list);
     TodoList? GetByGuid(Guid guid);
+    IQueryable<TodoList> GetTodoLists();
 }

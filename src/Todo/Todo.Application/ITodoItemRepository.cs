@@ -8,4 +8,5 @@ public interface ITodoItemRepository : IRepository<TodoItem>
     void Add(TodoItem item);
     TodoItem? GetByGuid(Guid guid);
     ICollection<TodoItem>? FindByListId(Guid guid);
+    IQueryable<TodoItem> GetTodoItems();
 }

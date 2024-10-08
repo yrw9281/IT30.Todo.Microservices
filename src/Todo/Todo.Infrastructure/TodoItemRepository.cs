@@ -30,4 +30,9 @@ public class TodoItemRepository : ITodoItemRepository
     {
         return _todoContext.TodoItems.Where(x => x.ListId == guid).ToList();
     }
+
+    public IQueryable<TodoItem> GetTodoItems()
+    {
+        return _todoContext.TodoItems;
+    }
 }

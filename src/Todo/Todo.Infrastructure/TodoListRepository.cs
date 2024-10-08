@@ -25,4 +25,9 @@ public class TodoListRepository : ITodoListRepository
     {
         return _todoContext.TodoLists.SingleOrDefault(x => x.Id == TodoListId.Create(guid));
     }
+
+    public IQueryable<TodoList> GetTodoLists()
+    {
+        return _todoContext.TodoLists;
+    }
 }
