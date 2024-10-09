@@ -1,5 +1,8 @@
 using Microsoft.OpenApi.Models;
 using Account.Infrastructure;
+using GraphQL.Client.Abstractions;
+using GraphQL.Client.Http;
+using GraphQL.Client.Serializer.SystemTextJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,17 @@ builder.Services.AddGrpcClient<Todo.Grpc.TodoListGrpcService.TodoListGrpcService
 builder.Services.AddGrpcClient<Todo.Grpc.TodoItemGrpcService.TodoItemGrpcServiceClient>(o =>
 {
     o.Address = new Uri("http://localhost:5144");
+});
+
+// Register GraphQLHttpClient for DI
+builder.Services.AddSingleton<IGraphQLClient>(s =>
+{
+    var options = new GraphQLHttpClientOptions
+    {
+        EndPoint = new Uri("http://localhost:5214/graphql/")
+    };
+
+    return new GraphQLHttpClient(options, new SystemTextJsonSerializer());
 });
 
 builder.Services.AddAccountAuthentication(builder.Configuration);

@@ -53,3 +53,14 @@ Content-Type: application/json
 
 ### TodoListController - Remove Todo List
 DELETE {{HostAddress}}/api/TodoList/remove/B2D3DB93-6CF2-408A-8360-CFA8AE5AFC88
+
+### GraphQLController - Query
+POST {{HostAddress}}/api/GraphQL/query
+Content-Type: application/json
+
+{
+  "query": "query ($userId: String!) { userById(userId: $userId) { id firstName lastName email todoListDtos { id name description todoItemDtos { id content state color } } }}",
+  "variables": {
+    "userId": "1C8EFD0D-05AC-427E-86DB-F13E4BB6F813"
+  }
+}
