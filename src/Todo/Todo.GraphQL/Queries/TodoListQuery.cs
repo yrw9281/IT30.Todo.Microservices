@@ -18,19 +18,7 @@ public class TodoListQuery
                 Status = todoList.Status,
                 UserId = todoList.UserId.ToString(),
                 CreatedDateTime = todoList.CreatedDateTime,
-                UpdatedDateTime = todoList.UpdatedDateTime,
-                TodoItems = todoItemRepository.GetTodoItems().ToList()
-                    .Where(item => item.ListId == todoList.Id.Value) // 對應的 TodoItem
-                    .Select(todoItem => new TodoItemDto
-                    {
-                        Id = todoItem.Id.Value.ToString(),
-                        Content = todoItem.Content,
-                        State = todoItem.Status.State,
-                        Color = todoItem.Status.Color,
-                        ListId = todoItem.ListId.ToString(),
-                        CreatedDateTime = todoItem.CreatedDateTime,
-                        UpdatedDateTime = todoItem.UpdatedDateTime
-                    }).ToList() // 將 Items 轉成 List
+                UpdatedDateTime = todoList.UpdatedDateTime
             });
 
     public TodoListDto? GetTodoListById([Service] ITodoListRepository todoListRepository, string listId)
@@ -47,4 +35,17 @@ public class TodoListQuery
                 UpdatedDateTime = todoList.UpdatedDateTime
             }).FirstOrDefault();
 
+    public List<TodoListDto>? GetTodoListsByUserId([Service] ITodoListRepository todoListRepository, string userId)
+        => todoListRepository.GetTodoLists()
+            .Where(list => list.UserId == new Guid(userId))
+            .Select(todoList => new TodoListDto
+            {
+                Id = todoList.Id.Value.ToString(),
+                Name = todoList.Name,
+                Description = todoList.Description,
+                Status = todoList.Status,
+                UserId = todoList.UserId.ToString(),
+                CreatedDateTime = todoList.CreatedDateTime,
+                UpdatedDateTime = todoList.UpdatedDateTime
+            }).ToList();
 }

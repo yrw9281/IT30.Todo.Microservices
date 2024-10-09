@@ -1,0 +1,19 @@
+extend type Query {
+  userById(userId: String!): UserDto @delegate(schema: "account")
+  todoListById(listId: String!): TodoListDto @delegate(schema: "todo")
+  todoItemById(itemId: String!): TodoItemDto @delegate(schema: "todo")
+}
+
+extend type UserDto {
+  todoListDtos: [TodoListDto!]
+    @delegate(schema: "todo", path: "todoListsByUserId(userId: $fields:id)")
+}
+
+extend type TodoListDto {
+  todoItemDtos: [TodoItemDto!]
+    @delegate(schema: "todo", path: "todoItemsByListId(listId: $fields:id)")
+}
+
+extend type TodoItemDto {
+  todoListDto: TodoListDto @delegate(schema: "todo")
+}

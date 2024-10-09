@@ -34,4 +34,18 @@ public class TodoItemQuery
                 CreatedDateTime = todoItem.CreatedDateTime,
                 UpdatedDateTime = todoItem.UpdatedDateTime
             }).FirstOrDefault();
+
+    public List<TodoItemDto>? GetTodoItemsByListId([Service] ITodoItemRepository todoItemRepository, string listId)
+        => todoItemRepository.GetTodoItems()
+            .Where(item => item.ListId == new Guid(listId))
+            .Select(todoItem => new TodoItemDto
+            {
+                Id = todoItem.Id.Value.ToString(),
+                Content = todoItem.Content,
+                State = todoItem.Status.State,
+                Color = todoItem.Status.Color,
+                ListId = todoItem.ListId.ToString(),
+                CreatedDateTime = todoItem.CreatedDateTime,
+                UpdatedDateTime = todoItem.UpdatedDateTime
+            }).ToList();
 }

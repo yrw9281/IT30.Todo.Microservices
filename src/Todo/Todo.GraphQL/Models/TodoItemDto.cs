@@ -11,5 +11,4 @@ public class TodoItemDto
     public string? ListId { get; set; }
     public DateTime? CreatedDateTime { get; set; }
     public DateTime? UpdatedDateTime { get; set; }
-    public TodoListDto? TodoList { get; set; }
 }

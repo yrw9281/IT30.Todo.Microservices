@@ -1,7 +1,3 @@
+ namespace Todo.GraphQL.Queries;
 
-namespace Todo.GraphQL.Queries;
-
-public class Query
-{
-
-}
+public class Query {}
