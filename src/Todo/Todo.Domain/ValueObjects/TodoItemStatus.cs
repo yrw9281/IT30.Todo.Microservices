@@ -19,9 +19,9 @@ public class TodoItemStatus : ValueObject
     {
         return state switch
         {
-            TodoItemState.Todo => "#FFFF00", // 黃色
-            TodoItemState.Finished => "#008000", // 綠色
-            TodoItemState.Removed => "#808080", // 灰色
+            TodoItemState.Todo => "#FFDD00", // 黃色
+            TodoItemState.Finished => "#30CC30", // 綠色
+            TodoItemState.Removed => "#666666", // 灰色
             _ => throw new ArgumentOutOfRangeException(nameof(state), $"Unknown state: {state}")
         };
     }

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List - 主控台</title>
+    <title>Todo Microservice</title>    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'%3E%3C/path%3E%3Cpolyline points='22 4 12 14.01 9 11.01'%3E%3C/polyline%3E%3C/svg%3E">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .todo-item {
@@ -18,7 +19,10 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Todo List</a>
+            <a class="navbar-brand" href="#">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'%3E%3C/path%3E%3Cpolyline points='22 4 12 14.01 9 11.01'%3E%3C/polyline%3E%3C/svg%3E" alt="Todo Microservice" width="30" height="30" class="d-inline-block align-top me-2">
+                <strong>Todo Microservice</strong>
+            </a>
             <div class="d-flex align-items-center">
                 <span id="userName" class="me-3"></span>
                 <button id="logoutBtn" class="btn btn-outline-danger">登出</button>
@@ -59,8 +63,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = 'index.html';
+            if (!token || isTokenExpired(token)) {
+                logout();
                 return;
             }
 
@@ -70,9 +74,39 @@
             fetchTodoLists();
         });
 
+        function isTokenExpired(token) {
+            const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+            return Math.floor(new Date().getTime() / 1000) >= expiry;
+        }
+
+        async function fetchWithAuth(url, options = {}) {
+            const token = localStorage.getItem('token');
+            if (!token || isTokenExpired(token)) {
+                logout();
+                return;
+            }
+
+            options.headers = {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`
+            };
+
+            try {
+                const response = await fetch(url, options);
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                return response;
+            } catch (error) {
+                console.error('請求錯誤:', error);
+                throw error;
+            }
+        }
+
         async function fetchTodoLists() {
             try {
-                const response = await fetch(`${API_URL}/api/GraphQL/query`, {
+                const response = await fetchWithAuth(`${API_URL}/api/GraphQL/query`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -82,6 +116,8 @@
                         variables: { userId: JSON.parse(atob(localStorage.getItem('token').split('.')[1])).sub }
                     })
                 });
+
+                if (!response) return;
 
                 if (!response.ok) {
                     throw new Error('獲取 Todo Lists 失敗');
@@ -102,12 +138,17 @@
             todoLists.forEach(list => {
                 if (list.status === 'ACTIVE') {
                     const listItem = document.createElement('li');
-                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.className = 'list-group-item';
                     listItem.innerHTML = `
-                        <span>${list.name}</span>
-                        <div>
-                            <button class="btn btn-sm btn-primary view-list" data-id="${list.id}">查看</button>
-                            <button class="btn btn-sm btn-danger remove-list" data-id="${list.id}">刪除</button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">${list.name}</h5>
+                                <small class="text-muted">${list.description}</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-primary view-list" data-id="${list.id}">查看</button>
+                                <button class="btn btn-sm btn-danger remove-list" data-id="${list.id}">刪除</button>
+                            </div>
                         </div>
                     `;
                     todoListsElement.appendChild(listItem);
