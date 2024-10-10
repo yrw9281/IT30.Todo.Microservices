@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List - 主控台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .todo-item {
+            transition: all 0.3s ease;
+        }
+        .todo-item.removed {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Todo List</a>
+            <div class="d-flex align-items-center">
+                <span id="userName" class="me-3"></span>
+                <button id="logoutBtn" class="btn btn-outline-danger">登出</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Todo Lists</h3>
+                <form id="createListForm" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" id="listName" class="form-control" placeholder="新增 Todo List" required>
+                        <input type="text" id="listDescription" class="form-control" placeholder="描述" required>
+                        <button class="btn btn-primary" type="submit">新增</button>
+                    </div>
+                </form>
+                <ul id="todoLists" class="list-group"></ul>
+            </div>
+            <div class="col-md-8">
+                <h3 id="currentListName">Todo Items</h3>
+                <form id="createItemForm" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" id="itemContent" class="form-control" placeholder="新增 Todo Item" required>
+                        <button class="btn btn-primary" type="submit">新增</button>
+                    </div>
+                </form>
+                <div id="todoItems" class="row row-cols-1 row-cols-md-2 g-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5282';
+        let currentListId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('userName').textContent = localStorage.getItem('userName');
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            fetchTodoLists();
+        });
+
+        async function fetchTodoLists() {
+            try {
+                const response = await fetch(`${API_URL}/api/GraphQL/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: `query ($userId: String!) { userById(userId: $userId) { id todoListDtos { id name description status } } }`,
+                        variables: { userId: JSON.parse(atob(localStorage.getItem('token').split('.')[1])).sub }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('獲取 Todo Lists 失敗');
+                }
+
+                const data = await response.json();
+                const todoLists = data.userById.todoListDtos;
+                renderTodoLists(todoLists);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function renderTodoLists(todoLists) {
+            const todoListsElement = document.getElementById('todoLists');
+            todoListsElement.innerHTML = '';
+
+            todoLists.forEach(list => {
+                if (list.status === 'ACTIVE') {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.innerHTML = `
+                        <span>${list.name}</span>
+                        <div>
+                            <button class="btn btn-sm btn-primary view-list" data-id="${list.id}">查看</button>
+                            <button class="btn btn-sm btn-danger remove-list" data-id="${list.id}">刪除</button>
+                        </div>
+                    `;
+                    todoListsElement.appendChild(listItem);
+                }
+            });
+
+            document.querySelectorAll('.view-list').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentListId = e.target.dataset.id;
+                    fetchTodoItems(currentListId);
+                });
+            });
+
+            document.querySelectorAll('.remove-list').forEach(btn => {
+                btn.addEventListener('click', (e) => removeTodoList(e.target.dataset.id));
+            });
+        }
+
+        async function fetchTodoItems(listId) {
+            try {
+                const response = await fetch(`${API_URL}/api/GraphQL/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: `query ($listId: String!) { todoListById(listId: $listId) { id name description todoItemDtos { id content state color } } }`,
+                        variables: { listId }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('獲取 Todo Items 失敗');
+                }
+
+                const data = await response.json();
+                const todoList = data.todoListById;
+                document.getElementById('currentListName').textContent = todoList.name;
+                renderTodoItems(todoList.todoItemDtos);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function renderTodoItems(todoItems) {
+            const todoItemsElement = document.getElementById('todoItems');
+            todoItemsElement.innerHTML = '';
+
+            todoItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = `col todo-item ${item.state.toLowerCase()}`;
+                itemElement.innerHTML = `
+                    <div class="card h-100" style="background-color: ${item.color}">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.content}</h5>
+                            <p class="card-text">狀態: ${item.state}</p>
+                            ${item.state === 'TODO' ? `<button class="btn btn-sm btn-success finish-item" data-id="${item.id}">完成</button>` : ''}
+                            ${item.state !== 'REMOVED' ? `<button class="btn btn-sm btn-danger remove-item" data-id="${item.id}">刪除</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                todoItemsElement.appendChild(itemElement);
+            });
+
+            document.querySelectorAll('.finish-item').forEach(btn => {
+                btn.addEventListener('click', (e) => finishTodoItem(e.target.dataset.id));
+            });
+
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', (e) => removeTodoItem(e.target.dataset.id));
+            });
+        }
+
+        document.getElementById('createListForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('listName').value;
+            const description = document.getElementById('listDescription').value;
+
+            try {
+                const response = await fetch(`${API_URL}/api/TodoList/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        userId: JSON.parse(atob(localStorage.getItem('token').split('.')[1])).sub,
+                        name,
+                        description
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('創建 Todo List 失敗');
+                }
+
+                document.getElementById('listName').value = '';
+                document.getElementById('listDescription').value = '';
+                fetchTodoLists();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        document.getElementById('createItemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentListId) {
+                alert('請先選擇一個 Todo List');
+                return;
+            }
+
+            const content = document.getElementById('itemContent').value;
+
+            try {
+                const response = await fetch(`${API_URL}/api/TodoItem/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        listId: currentListId,
+                        content
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('創建 Todo Item 失敗');
+                }
+
+                document.getElementById('itemContent').value = '';
+                fetchTodoItems(currentListId);
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        async function removeTodoList(listId) {
+            try {
+                const response = await fetch(`${API_URL}/api/TodoList/remove/${listId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('刪除 Todo List 失敗');
+                }
+
+                fetchTodoLists();
+                if (currentListId === listId) {
+                    currentListId = null;
+                    document.getElementById('currentListName').textContent = 'Todo Items';
+                    document.getElementById('todoItems').innerHTML = '';
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function finishTodoItem(itemId) {
+            try {
+                const response = await fetch(`${API_URL}/api/TodoItem/finish`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ id: itemId })
+                });
+
+                if (!response.ok) {
+                    throw new Error('完成 Todo Item 失敗');
+                }
+
+                fetchTodoItems(currentListId);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        async function removeTodoItem(itemId) {
+            try {
+                const response = await fetch(`${API_URL}/api/TodoItem/remove/${itemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('刪除 Todo Item 失敗');
+                }
+
+                fetchTodoItems(currentListId);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

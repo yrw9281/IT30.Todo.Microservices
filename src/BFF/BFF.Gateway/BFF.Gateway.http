@@ -16,8 +16,8 @@ POST {{HostAddress}}/api/Account/login
 Content-Type: application/json
 
 {
-  "email": "string",
-  "password": "string"
+  "email": "john.cena@mail.com",
+  "password": "1234"
 }
 
 ### TodoItemController - Create Todo Item
@@ -58,9 +58,11 @@ DELETE {{HostAddress}}/api/TodoList/remove/B2D3DB93-6CF2-408A-8360-CFA8AE5AFC88
 POST {{HostAddress}}/api/GraphQL/query
 Content-Type: application/json
 
-{
-  "query": "query ($userId: String!) { userById(userId: $userId) { id firstName lastName email todoListDtos { id name description todoItemDtos { id content state color } } }}",
-  "variables": {
-    "userId": "1C8EFD0D-05AC-427E-86DB-F13E4BB6F813"
-  }
-}
+{"query":"query ($userId: String!) { userById(userId: $userId) { todoListDtos { id name description status todoItemDtos { id content state color } } }}","variables":{"userId":"E524AA81-D114-440F-89BE-3A64806D5ED5"}}
+
+# {
+#   "query": "query ($userId: String!) { userById(userId: $userId) { id firstName lastName email todoListDtos { id name description todoItemDtos { id content state color } } }}",
+#   "variables": {
+#     "userId": "1C8EFD0D-05AC-427E-86DB-F13E4BB6F813"
+#   }
+# }
