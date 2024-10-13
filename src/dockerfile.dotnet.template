@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+ARG PROJECT_FOLDER
+ARG PROJECT_NAME
+WORKDIR /App
+COPY . .
+RUN dotnet restore ./${PROJECT_FOLDER}/${PROJECT_NAME}/${PROJECT_NAME}.csproj
+RUN dotnet publish ./${PROJECT_FOLDER}/${PROJECT_NAME}/${PROJECT_NAME}.csproj -c Release -o out
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+ARG PROJECT_NAME
+ARG PORT=80
+WORKDIR /App
+COPY --from=build-env /App/out .
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://*:${PORT}
+RUN echo '#!/bin/bash\n\
+dotnet '"$PROJECT_NAME"'.dll' > /App/start.sh && \
+    chmod +x /App/start.sh
+ENTRYPOINT ["/App/start.sh"]

@@ -4,9 +4,10 @@ const string ACCOUNT = "account";
 const string TODO = "todo";
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
-builder.Services.AddHttpClient(ACCOUNT, c => c.BaseAddress = new Uri("http://localhost:5068/graphql"));
-builder.Services.AddHttpClient(TODO, c => c.BaseAddress = new Uri("http://localhost:5261/graphql"));
+builder.Services.AddHttpClient(ACCOUNT, c => c.BaseAddress = new Uri(configuration["Services:Account"]!));
+builder.Services.AddHttpClient(TODO, c => c.BaseAddress = new Uri(configuration["Services:Todo"]!));
 builder.Services.AddGraphQLServer()
     .AddQueryType(d => d.Name("Query"))
     .AddRemoteSchema(ACCOUNT, ignoreRootTypes: true)

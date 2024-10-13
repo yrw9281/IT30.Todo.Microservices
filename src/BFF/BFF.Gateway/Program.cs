@@ -6,6 +6,8 @@ using GraphQL.Client.Serializer.SystemTextJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -26,17 +28,17 @@ builder.Services.AddSwaggerGen(c =>
 // gRPC client services for each gRPC service
 builder.Services.AddGrpcClient<Account.Grpc.AccountGrpcService.AccountGrpcServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:5077");
+    o.Address = new Uri(configuration["Services:AccountService"]!);
 });
 
 builder.Services.AddGrpcClient<Todo.Grpc.TodoListGrpcService.TodoListGrpcServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:5144");
+    o.Address = new Uri(configuration["Services:TodoService"]!);
 });
 
 builder.Services.AddGrpcClient<Todo.Grpc.TodoItemGrpcService.TodoItemGrpcServiceClient>(o =>
 {
-    o.Address = new Uri("http://localhost:5144");
+    o.Address = new Uri(configuration["Services:TodoService"]!);
 });
 
 // Register GraphQLHttpClient for DI
@@ -44,7 +46,7 @@ builder.Services.AddSingleton<IGraphQLClient>(s =>
 {
     var options = new GraphQLHttpClientOptions
     {
-        EndPoint = new Uri("http://localhost:5214/graphql/")
+        EndPoint = new Uri(configuration["Services:GraphQLGateway"]!)
     };
 
     return new GraphQLHttpClient(options, new SystemTextJsonSerializer());

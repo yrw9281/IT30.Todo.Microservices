@@ -33,6 +33,113 @@ services:
     networks:
       - app-network
 
+  account_grpc:
+    build:
+      context: .
+      dockerfile: dockerfile.dotnet.template
+      args:
+        PROJECT_FOLDER: Account
+        PROJECT_NAME: Account.Grpc
+        PORT: 5001
+    depends_on:
+      - account_db
+      - rabbitmq
+    ports:
+      - "5001:5001"
+    networks:
+      - app-network
+
+  account_graphql:
+    build:
+      context: .
+      dockerfile: dockerfile.dotnet.template  
+      args:
+        PROJECT_FOLDER: Account
+        PROJECT_NAME: Account.GraphQL
+        PORT: 4001
+    depends_on:
+      - account_db
+    ports:
+      - "4001:4001"
+    networks:
+      - app-network
+
+  todo_grpc:
+    build:
+      context: .
+      dockerfile: dockerfile.dotnet.template
+      args:
+        PROJECT_FOLDER: Todo
+        PROJECT_NAME: Todo.Grpc
+        PORT: 5002
+    depends_on:
+      - todo_db
+      - rabbitmq
+    ports:
+      - "5002:5002"
+    networks:
+      - app-network
+    entrypoint: ["/bin/sh", "-c", "sleep 30 && /App/start.sh"]
+
+  todo_graphql:
+    build:
+      context: .
+      dockerfile: dockerfile.dotnet.template
+      args:
+        PROJECT_FOLDER: Todo
+        PROJECT_NAME: Todo.GraphQL
+        PORT: 4002
+    depends_on:
+      - todo_db
+    ports:
+      - "4002:4002"
+    networks:
+      - app-network
+
+  graphql_gateway:
+    build:
+      context: .
+      dockerfile: dockerfile.dotnet.template
+      args:
+        PROJECT_FOLDER: BFF
+        PROJECT_NAME: GraphQL.Gateway
+        PORT: 4000
+    depends_on:
+      - account_graphql
+      - todo_graphql
+    ports:
+      - "4000:4000"
+    networks:
+      - app-network
+    volumes:
+    - ./BFF/GraphQL.Gateway/Stitching.graphql:/App/Stitching.graphql
+
+  bff_gateway:
+    build:
+      context: .
+      dockerfile: dockerfile.dotnet.template
+      args:
+        PROJECT_FOLDER: BFF
+        PROJECT_NAME: BFF.Gateway
+        PORT: 5000
+    depends_on:
+      - account_grpc
+      - todo_grpc
+      - graphql_gateway
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./WebApp:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
 volumes:
   account_data:
   todo_data:
